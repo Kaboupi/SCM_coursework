@@ -28,7 +28,6 @@ if __name__ == '__main__':
     df = df.join(calculate_required_resources(df, so_df, conn), on=df.index)
 
     res_df = get_res_df(df, conn)
-
     res_df.to_sql('mrp', conn, if_exists='replace')
     logger.success('Таблица успешно выгружена в mrp')
     res_df.to_csv('./result_output/mpr_table.csv')
