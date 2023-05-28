@@ -1,0 +1,55 @@
+DROP TABLE IF EXISTS MRP;
+DROP TABLE IF EXISTS Sales_Orders;
+DROP TABLE IF EXISTS Product_Link;
+DROP TABLE IF EXISTS Standard_Operation;
+DROP TABLE IF EXISTS Resources;
+DROP TABLE IF EXISTS Product;
+DROP TABLE IF EXISTS Customer;
+
+CREATE TABLE Customer(
+customer_id SERIAL PRIMARY KEY,
+customer_name VARCHAR(50),
+customer_priority INT
+);
+
+CREATE TABLE Product(
+product_id SERIAL PRIMARY KEY,
+product_desc VARCHAR(50),
+product_min_weight INT
+);
+
+CREATE TABLE Resources(
+resource_id SERIAL PRIMARY KEY,
+resource_desc VARCHAR(50),
+status INT
+);
+
+CREATE TABLE Standard_Operation(
+operation_id INT,
+product_id INT,
+resource_id INT,
+performance INT,
+yield NUMERIC(18, 5),
+FOREIGN KEY (product_id) REFERENCES Product(product_id),
+FOREIGN KEY (resource_id) REFERENCES Resources(resource_id)
+);
+
+CREATE TABLE Product_Link(
+arc_id SERIAL PRIMARY KEY,
+owner INT,
+component INT,
+arc_desc VARCHAR(50)
+);
+
+CREATE TABLE Sales_Orders(
+sales_order_id VARCHAR(50) PRIMARY KEY,
+customer_id INT,
+product_id INT,
+so_weight INT,
+so_tolerance INT,
+so_status INT,
+unit_weight INT,
+so_due_date DATE,
+FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
+FOREIGN KEY (product_id) REFERENCES Product(product_id)
+);

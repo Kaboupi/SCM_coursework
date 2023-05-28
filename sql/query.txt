@@ -1,0 +1,16 @@
+SELECT
+    s.sales_order_id,
+    s.product_id,
+    s.so_weight,
+    s.so_tolerance,
+    s.so_due_date as due_date,
+    c.customer_priority as priority,
+    s.unit_weight
+FROM
+    Sales_Orders s
+INNER JOIN
+    Customer c
+    ON
+    s.customer_id = c.customer_id
+ORDER BY
+    priority, due_date ASC;
