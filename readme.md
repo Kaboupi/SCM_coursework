@@ -17,8 +17,8 @@
     pip install -Ur ./src/requirements.txt
     ```
 4. Запускаем скрипт
-```bash
-python run_script.py
-```
+    ```bash
+    python run_script.py
+    ```
 5. Вставляем запрос `./src/mrp.sql` в PostgreSQL
 6. Готово!
