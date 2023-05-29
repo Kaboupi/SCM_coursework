@@ -30,5 +30,5 @@ if __name__ == '__main__':
     res_df = get_res_df(df, conn)
     res_df.to_sql('mrp', conn, if_exists='replace')
     logger.success('Таблица успешно выгружена в mrp')
-    res_df.to_csv('./result_output/mpr_table.csv')
+    res_df.to_csv('./result_output/MRP.csv')
     logger.success('Таблица успешно сохранена в .csv')
