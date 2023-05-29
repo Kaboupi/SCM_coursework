@@ -48,7 +48,6 @@ def get_datetime(data: pd.DataFrame, time: pd.DataFrame) -> list:
     for i, day in enumerate(dates):
         res_list.append((day + pd.to_timedelta(delay_array[i], unit='d')).strftime('%Y-%m-%d'))
         
-    logger.info('Получили pd.DataFrame с датами выполнения заказа')
     return res_list
 
 
@@ -134,7 +133,7 @@ def calculate_required_resources(data: pd.DataFrame,
     for i in np.arange(resources.shape[1])[1:]:
         resources.iloc[:, i] = resources.iloc[:, i - 1] / resources.iloc[:, i]
         power.iloc[:, i] = resources.iloc[:, i - 1] / power.iloc[:, i]
-    data['Дата_завершения'] = get_datetime(data, power)
+    data['Дата_начала'] = get_datetime(data, power)
     
     del indexes, performance, yields
     power = power.T.replace(np.inf, 0).sum()
@@ -145,8 +144,9 @@ def calculate_required_resources(data: pd.DataFrame,
             'Требуемые_ресурсы': np.round(resources, 3),
             'Требуемая_мощность': np.round(power, 3)
             })
+
     
-def get_res_df(data: pd.DataFrame, conn: engine.Connection) -> pd.DataFrame:
+def get_res_df(df: pd.DataFrame, conn: engine.Connection) -> pd.DataFrame:
     """### Возвращает итоговый pandas.DataFrame с колонкой даты начала
 
     Args:
@@ -155,11 +155,14 @@ def get_res_df(data: pd.DataFrame, conn: engine.Connection) -> pd.DataFrame:
     Returns:
         pd.DataFrame: Итоговый DataFrame MRP
     """
-    end_date = pd.to_datetime(data['Дата_завершения'], format='%Y-%m-%d')
-    start_date = end_date - pd.to_timedelta(data['Требуемая_мощность'], unit='h')
-    data['Дата_начала'] = start_date.dt.date
+    df = df.sort_index()
+    df['Дата_завершения'] = pd.read_sql('select so_due_date from sales_orders;', conn).values
+    
+    date = pd.to_datetime(df['Дата_завершения'], format='%Y-%m-%d')
+    start_date = date - pd.to_timedelta(df['Требуемая_мощность'], unit='h')
+    df['Дата_начала'] = start_date.dt.date
 
-    return data[['Значение_допуска',
+    return df[['Значение_допуска',
                  'Допуск',
                  'Требуемые_ресурсы',
                  'Требуемая_мощность',
